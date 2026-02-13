@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Avni 🤍</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#fff,#ffe6f2);
+color:#333;
+overflow-x:hidden;
+}
+
+.page{
+display:none;
+min-height:100vh;
+padding:40px 20px;
+text-align:center;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.page.active{
+display:flex;
+}
+
+h1{
+font-size:28px;
+margin-bottom:20px;
+}
+
+p{
+max-width:750px;
+font-size:18px;
+line-height:1.7;
+min-height:120px;
+}
+
+button{
+margin:12px;
+padding:14px 30px;
+font-size:16px;
+border:none;
+border-radius:30px;
+background:#ff4d88;
+color:white;
+cursor:pointer;
+}
+
+button:active{
+transform:scale(0.95);
+}
+
+.choice{
+background:#ccc;
+color:#333;
+}
+
+.countdown{
+font-size:20px;
+margin-top:15px;
+color:#ff1a66;
+}
+
+.heart{
+position:fixed;
+bottom:-20px;
+pointer-events:none;
+animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+0%{transform:translateY(0);opacity:0.8;}
+100%{transform:translateY(-110vh);opacity:0;}
+}
+
+.final-text{
+font-size:26px;
+line-height:1.8;
+color:#ff0066;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+<source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- PAGE 1 -->
+<div class="page active" id="p1">
+<h1>Will you be my Valentine? 🤍✨</h1>
+<button onclick="startExperience()">Yes 🤍</button>
+<button class="choice" onclick="noClicked(this)">No</button>
+<p id="noText" style="color:#ff1a66;"></p>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="p2">
+<h1>Happy Valentine's Day 🤍🌸</h1>
+<p data-text="You are one of the most special souls I have ever met 🥺🤍 Your presence in my life feels warm comforting and real ✨"></p>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="p3">
+<h1>Why You? 🤍</h1>
+<p data-text="Because you are different 🥹🤍 Your heart is soft your vibe is comforting and being with you feels natural and right 🌙✨"></p>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="p4">
+<h1>My Biggest Fear 🤍</h1>
+<p data-text="My biggest fear is losing you 🥺🤍 You have become such an important part of my heart and I never want a day without you in it ✨"></p>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 5 COUNTDOWN -->
+<div class="page" id="p5">
+<h1>Since 7 January 2026 🤍</h1>
+<p>We have been together for:</p>
+<div class="countdown" id="counter"></div>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page" id="p6">
+<h1>I Am Dumb But I Love You 🤍</h1>
+<p data-text="Yes I am dumb sometimes 😭🤍 I overthink I mess up but one thing will never change and that is how deeply I care about you 💞"></p>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 7 VIRTUAL HUG -->
+<div class="page" id="p7">
+<h1>Virtual Hug 🤍</h1>
+<p>Close your eyes and imagine me holding you tightly right now 🥺🤍</p>
+<button onclick="hugExplosion()">Tap To Feel My Hug 🤍</button>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 8 -->
+<div class="page" id="p8">
+<h1>One More Thing 🤍</h1>
+<p data-text="No matter what happens I will always choose you and protect what we have 🤍✨"></p>
+<button onclick="nextPage()">Next 🤍</button>
+</div>
+
+<!-- PAGE 9 SURPRISE -->
+<div class="page" id="p9">
+<h1>Final Surprise 🤍</h1>
+<button onclick="showFinal()">Tap For Surprise 🤍</button>
+</div>
+
+<!-- FINAL -->
+<div class="page" id="finalPage">
+<div class="final-text">
+I LOVEEEEEEEE YOUUUUUUUUUUUUUU SOOOOOOOOOO MUCHHHHHHHHHHHHHHHH 🤍✨<br><br>
+AND I’LL NEVERRR LEAVEEE YOUUUUU 🤍
+</div>
+</div>
+
+<script>
+let current=1;
+let typingInterval;
+
+function startExperience(){
+document.getElementById("bgMusic").play().catch(()=>{});
+nextPage();
+}
+
+function nextPage(){
+document.getElementById("p"+current).classList.remove("active");
+current++;
+let newPage=document.getElementById("p"+current);
+newPage.classList.add("active");
+startTyping(newPage);
+}
+
+function noClicked(btn){
+btn.style.display="none";
+document.getElementById("noText").innerText="You have to select Yes dumbo 🤍😌";
+}
+
+function startTyping(page){
+let p=page.querySelector("p[data-text]");
+if(!p) return;
+let text=p.getAttribute("data-text");
+p.innerHTML="";
+let i=0;
+clearInterval(typingInterval);
+typingInterval=setInterval(()=>{
+p.innerHTML+=text.charAt(i);
+i++;
+if(i>=text.length) clearInterval(typingInterval);
+},20);
+}
+
+/* Countdown */
+function updateCounter(){
+let startDate=new Date("January 7, 2026 00:00:00").getTime();
+let now=new Date().getTime();
+let diff=now-startDate;
+
+let days=Math.floor(diff/(1000*60*60*24));
+let hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+let minutes=Math.floor((diff%(1000*60*60))/(1000*60));
+
+document.getElementById("counter").innerHTML=
+days+" Days "+hours+" Hours "+minutes+" Minutes 🤍";
+}
+setInterval(updateCounter,1000);
+updateCounter();
+
+/* Hug Explosion */
+function hugExplosion(){
+for(let i=0;i<25;i++){
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerText="🤍";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(20+Math.random()*25)+"px";
+heart.style.animationDuration="3s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),3000);
+}
+}
+
+/* Final */
+function showFinal(){
+document.getElementById("p9").classList.remove("active");
+document.getElementById("finalPage").classList.add("active");
+}
+
+/* Background Hearts */
+function createHeart(){
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerText="🤍";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(15+Math.random()*15)+"px";
+heart.style.animationDuration=(4+Math.random()*3)+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createHeart,900);
+</script>
+
+</body>
+</html>
